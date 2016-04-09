@@ -19,6 +19,12 @@ child(void)
 		case 0:
 			break;
 		case EOWNERDEAD:
+			error = pthread_mutex_consistent(gl);
+			if (error != 0) {
+				fprintf(stderr, "pthread_mutex_consistent %s\n",
+				    strerror(errno));
+				exit(1);
+			}
 			/* XXX */
 			break;
 		case ENOTRECOVERABLE:
