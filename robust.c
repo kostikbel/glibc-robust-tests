@@ -8,6 +8,36 @@
 
 static pthread_mutex_t *gl;
 
+static void
+child(void)
+{
+	int error;
+
+	for (;;) {
+		error = pthread_mutex_lock(gl);
+		switch (error) {
+		case 0:
+			break;
+		case EOWNERDEAD:
+			/* XXX */
+			break;
+		case ENOTRECOVERABLE:
+			/* XXX */
+			break;
+		default:
+			fprintf(stderr, "pthread_mutex_lock %s\n",
+			    strerror(error));
+			exit(1);
+		}
+		error = pthread_mutex_unlock(gl);
+		if (error != 0) {
+			fprintf(stderr, "pthread_mutex_unlock %s\n",
+			    strerror(error));
+			exit(1);
+		}
+	}
+}
+
 int
 main(void)
 {
