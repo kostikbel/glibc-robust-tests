@@ -44,7 +44,7 @@ void initialize(pthread_mutex_t& mtx)
     if(int err = pthread_mutexattr_setprotocol(&mtxa, PTHREAD_PRIO_INHERIT))
         throw Error("pthread_mutexattr_setprotocol: (%d)%s", err, strerror(err));
     // if another process is killed while holding the mutex, the other process must be unaffected
-    if(int err = pthread_mutexattr_setrobust_np(&mtxa, PTHREAD_MUTEX_ROBUST_NP))
+    if(int err = pthread_mutexattr_setrobust(&mtxa, PTHREAD_MUTEX_ROBUST))
         throw Error("pthread_mutexattr_setrobust: (%d)%s", err, strerror(err));
     if(int err = pthread_mutex_init(&mtx, &mtxa))
         throw Error("pthread_mutex_init: (%d)%s", err, strerror(err));
@@ -66,7 +66,7 @@ void initialize(pthread_cond_t& cnd)
 
 bool set_consistent(pthread_mutex_t& mtx)
 {
-    if(int err = pthread_mutex_consistent_np(&mtx))
+    if(int err = pthread_mutex_consistent(&mtx))
         throw Error("pthread_mutex_consistent: (%d)%s", err, strerror(err));
     // the mutex is locked, this thread owns it now
     return true;
