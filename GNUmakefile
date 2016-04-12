@@ -9,3 +9,6 @@ robust:	robust.c
 
 rh-pr628608:	rh-pr628608.cc
 	$(CXX) $(CFLAGS) -o rh-pr628608 rh-pr628608.cc -lpthread
+
+clean:
+	rm -f robust rh-pr628608 *.core
