@@ -40,9 +40,11 @@ void initialize(pthread_mutex_t& mtx)
         throw Error("pthread_mutexattr_init: (%d)%s", err, strerror(err));
     if(int err = pthread_mutexattr_setpshared(&mtxa, PTHREAD_PROCESS_SHARED))
         throw Error("pthread_mutexattr_setpshared: (%d)%s", err, strerror(err));
+#if 0
     // often one process is a real-time and another is not. protect from priority inversion.
     if(int err = pthread_mutexattr_setprotocol(&mtxa, PTHREAD_PRIO_INHERIT))
         throw Error("pthread_mutexattr_setprotocol: (%d)%s", err, strerror(err));
+#endif
     // if another process is killed while holding the mutex, the other process must be unaffected
     if(int err = pthread_mutexattr_setrobust(&mtxa, PTHREAD_MUTEX_ROBUST))
         throw Error("pthread_mutexattr_setrobust: (%d)%s", err, strerror(err));
