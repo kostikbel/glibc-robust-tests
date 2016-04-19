@@ -1,4 +1,5 @@
 robust
 rh-pr628608
 *.o
-core
+*.core
+ktrace.out
