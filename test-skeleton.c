@@ -246,6 +246,8 @@ set_fortify_handler (void (*handler) (int sig))
   ignore_stderr ();
 }
 
+extern char *__progname;
+
 /* Show people how to run the program.  */
 static void
 usage (void)
@@ -258,7 +260,7 @@ usage (void)
 	  "  TIMEOUTFACTOR          An integer used to scale the timeout\n"
 	  "  TMPDIR                 Where to place temporary files\n"
 	  "\n",
-	  program_invocation_short_name);
+	  __progname);
   printf ("Options:\n");
   for (i = 0; options[i].name; ++i)
     {
