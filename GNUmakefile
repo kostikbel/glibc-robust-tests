@@ -11,7 +11,9 @@ BINS= \
 	tst-robust2 \
 	tst-robust3 \
 	tst-robust4 \
-	tst-robust5
+	tst-robust5 \
+	tst-robust6 \
+	tst-robust7
 
 all:	$(BINS)
 
@@ -34,7 +36,13 @@ tst-robust4:	tst-robust4.c test-skeleton.c tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robust4 tst-robust4.c -lpthread
 
 tst-robust5:	tst-robust5.c test-skeleton.c tst-robust2.c tst-robust1.c
-	$(CC) $(CFLAGS) -o tst-robust4 tst-robust4.c -lpthread
+	$(CC) $(CFLAGS) -o tst-robust5 tst-robust5.c -lpthread
+
+tst-robust6:	tst-robust6.c test-skeleton.c tst-robust3.c tst-robust1.c
+	$(CC) $(CFLAGS) -o tst-robust6 tst-robust6.c -lpthread
+
+tst-robust7:	tst-robust7.c test-skeleton.c
+	$(CC) $(CFLAGS) -o tst-robust7 tst-robust7.c -lpthread
 
 clean:
 	rm -f $(BINS) *.core
