@@ -2,8 +2,8 @@ CC=gcc
 CXX=g++
 CFLAGS=-O -g -Wall -Wextra
 
-BINS=robust rh-pr628608 tst-robust1.c
-all:	
+BINS=robust rh-pr628608 tst-robust1
+all:	$(BINS)
 
 robust:	robust.c
 	$(CC) $(CFLAGS) -o robust robust.c -lpthread
