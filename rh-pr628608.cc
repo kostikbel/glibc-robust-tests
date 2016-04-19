@@ -66,19 +66,21 @@ void initialize(pthread_cond_t& cnd)
 }
 
 
-bool set_consistent(pthread_mutex_t& mtx)
+bool set_consistent(pthread_mutex_t& mtx, bool make_consistent)
 {
+    if (!make_consistent)
+	return true;
     if(int err = pthread_mutex_consistent(&mtx))
         throw Error("pthread_mutex_consistent: (%d)%s", err, strerror(err));
     // the mutex is locked, this thread owns it now
     return true;
 }
 
-void lock(pthread_mutex_t& mtx, bool* abandoned)
+void lock(pthread_mutex_t& mtx, bool* abandoned, bool make_consistent)
 {
     if(int err = pthread_mutex_lock(&mtx)) {
         if(EOWNERDEAD == err) // handle abandoned mutex
-            *abandoned = set_consistent(mtx);
+            *abandoned = set_consistent(mtx, make_consistent);
         else
             throw Error("pthread_mutex_lock: (%d)%s", err, strerror(err));
     }
@@ -99,11 +101,12 @@ void signal(pthread_cond_t& cnd)
         throw Error("pthread_cond_signal: (%d)%s", err, strerror(err));
 }
 
-void wait(pthread_cond_t& cnd, pthread_mutex_t& mtx, bool* abandoned)
+void wait(pthread_cond_t& cnd, pthread_mutex_t& mtx, bool* abandoned,
+  bool make_consistent)
 {
     if(int err = pthread_cond_wait(&cnd, &mtx)) {
-        if(EOWNERDEAD == err) // handle abandoned mutex
-            *abandoned = set_consistent(mtx);
+        if(EOWNERDEAD == err)  // handle abandoned mutex
+            *abandoned = set_consistent(mtx, make_consistent);
         else
             throw Error("pthread_cond_wait: (%d)%s", err, strerror(err));
     }
@@ -174,8 +177,8 @@ int process_1()
 
     SharedData* shared_data = SharedData::map(shared_file, pid);
     bool abandoned_not_used;
-    lock(shared_data->mtx_1, &abandoned_not_used); // abandon this mutex, EOWNERDEAD in pthread_cond_wait
-    lock(shared_data->mtx_2, &abandoned_not_used); // abandon this mutex, EOWNERDEAD in pthread_mutex_lock
+    lock(shared_data->mtx_1, &abandoned_not_used, false); // abandon this mutex, EOWNERDEAD in pthread_cond_wait
+    lock(shared_data->mtx_2, &abandoned_not_used, false); // abandon this mutex, EOWNERDEAD in pthread_mutex_lock
     shared_data->event = 1;
     signal(shared_data->cnd);
     printf("%u: terminated\n", pid);
@@ -183,7 +186,7 @@ int process_1()
     return 0;
 }
 
-int process_2()
+int process_2(bool make_consistent)
 {
     unsigned pid = getpid();
     printf("%u: process 2\n", pid);
@@ -195,19 +198,19 @@ int process_2()
     int failures = 0;
 
     printf("%u: locking mtx_1...\n", pid);
-    lock(shared_data->mtx_1, &abandoned);
+    lock(shared_data->mtx_1, &abandoned, make_consistent);
     failures += !abandoned;
     if(!abandoned)
         fprintf(stderr, "check failed: mtx_1 is not reported as abandoned\n");
     printf("%u: mtx_1 locked\n", pid);
 
     while(1 != shared_data->event)
-        wait(shared_data->cnd, shared_data->mtx_1, &abandoned);
+        wait(shared_data->cnd, shared_data->mtx_1, &abandoned, make_consistent);
     // if(!abandoned)
     //     fprintf("check failed: mtx_1 is not reported as abandoned");
 
     printf("%u: locking mtx_2...\n", pid);
-    lock(shared_data->mtx_2, &abandoned);
+    lock(shared_data->mtx_2, &abandoned, make_consistent);
     failures += !abandoned;
     if(!abandoned)
         fprintf(stderr, "check failed: mtx_1 is not reported as abandoned\n");
@@ -235,7 +238,7 @@ int main(int ac, char** av)
             throw Error("waitpid: (%d)%s", errno, strerror(errno));
 
         // now do process_2
-        return process_2();
+        return process_2(true);
     }
 
     case 1:
@@ -247,6 +250,10 @@ int main(int ac, char** av)
     case 2:
         // start with an existing file with abandoned mutexes
         // run only process 2
-        return process_2();
+        return process_2(true);
+    case 3:
+        // start with an existing file with abandoned mutexes
+        // run only process 2
+        return process_2(false);
     }
 }
