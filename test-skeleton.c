@@ -31,6 +31,7 @@
 #include <sys/resource.h>
 #include <sys/wait.h>
 #include <sys/param.h>
+#include <sys/queue.h>
 #include <time.h>
 
 /* The test function is normally called `do_test' and it is called
@@ -72,9 +73,10 @@ static const char *test_dir;
 /* List of temporary files.  */
 struct temp_name_list
 {
-  struct qelem q;
+  TAILQ_ENTRY(temp_name_list) q;
   char *name;
-} *temp_name_list;
+};
+TAILQ_HEAD(, temp_name_list) tempnam_list;
 
 /* Add temporary files in list.  */
 static void
@@ -87,10 +89,7 @@ add_temp_file (const char *name)
   if (newp != NULL && newname != NULL)
     {
       newp->name = newname;
-      if (temp_name_list == NULL)
-	temp_name_list = (struct temp_name_list *) &newp->q;
-      else
-	insque (newp, temp_name_list);
+      TAILQ_INSERT_TAIL(&tempnam_list, newp, q);
     }
   else
     free (newp);
@@ -100,15 +99,12 @@ add_temp_file (const char *name)
 static void
 delete_temp_files (void)
 {
-  while (temp_name_list != NULL)
+  struct temp_name_list *p, *p1;
+  TAILQ_FOREACH_SAFE(p, &tempnam_list, q, p1)
     {
-      remove (temp_name_list->name);
-      free (temp_name_list->name);
-
-      struct temp_name_list *next
-	= (struct temp_name_list *) temp_name_list->q.q_forw;
-      free (temp_name_list);
-      temp_name_list = next;
+      remove (p->name);
+      free (p->name);
+      free(p);
     }
 }
 
