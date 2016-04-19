@@ -387,13 +387,11 @@ main (int argc, char *argv[])
         }
 #endif
 
-      if (temp_name_list != NULL)
+      if (!TAILQ_EMPTY(&tempnam_list))
         {
           struct temp_name_list *n;
           fprintf (f, "temp_files=(\n");
-          for (n = temp_name_list;
-               n != NULL;
-               n = (struct temp_name_list *) n->q.q_forw)
+          TAILQ_FOREACH (n, &tempnam_list, q)
             fprintf (f, "  '%s'\n", n->name);
           fprintf (f, ")\n");
         }
