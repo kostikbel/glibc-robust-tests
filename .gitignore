@@ -3,3 +3,17 @@ rh-pr628608
 *.o
 *.core
 ktrace.out
+tst-robust1
+tst-robust2
+tst-robust3
+tst-robust4
+tst-robust5
+tst-robust6
+tst-robust7
+tst-robustpi1
+tst-robustpi2
+tst-robustpi3
+tst-robustpi4
+tst-robustpi5
+tst-robustpi6
+tst-robustpi7
