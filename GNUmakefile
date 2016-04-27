@@ -61,22 +61,25 @@ tst-robust6:	tst-robust6.c test-skeleton.c tst-robust3.c tst-robust1.c
 tst-robust7:	tst-robust7.c test-skeleton.c
 	$(CC) $(CFLAGS) -o tst-robust7 tst-robust7.c -lpthread
 
-tst-robustpi1:	tst-robustpi1.c test-skeleton.c
+tst-robustpi1:	tst-robustpi1.c test-skeleton.c tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robustpi1 tst-robustpi1.c -lpthread
 
-tst-robustpi2:	tst-robustpi2.c test-skeleton.c tst-robustpi1.c
+tst-robustpi2:	tst-robustpi2.c test-skeleton.c tst-robustpi1.c \
+    tst-robust2.c tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robustpi2 tst-robustpi2.c -lpthread
 
-tst-robustpi3:	tst-robustpi3.c test-skeleton.c tst-robustpi1.c
+tst-robustpi3:	tst-robustpi3.c test-skeleton.c tst-robust3.c tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robustpi3 tst-robustpi3.c -lpthread
 
-tst-robustpi4:	tst-robustpi4.c test-skeleton.c tst-robustpi1.c
+tst-robustpi4:	tst-robustpi4.c test-skeleton.c tst-robust4.c tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robustpi4 tst-robustpi4.c -lpthread
 
-tst-robustpi5:	tst-robustpi5.c test-skeleton.c tst-robustpi2.c tst-robustpi1.c
+tst-robustpi5:	tst-robustpi5.c test-skeleton.c tst-robust5.c tst-robust2.c \
+    tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robustpi5 tst-robustpi5.c -lpthread
 
-tst-robustpi6:	tst-robustpi6.c test-skeleton.c tst-robustpi3.c tst-robustpi1.c
+tst-robustpi6:	tst-robustpi6.c test-skeleton.c tst-robust6.c tst-robust3.c \
+    tst-robust1.c
 	$(CC) $(CFLAGS) -o tst-robustpi6 tst-robustpi6.c -lpthread
 
 tst-robustpi7:	tst-robustpi7.c tst-robust7.c test-skeleton.c
