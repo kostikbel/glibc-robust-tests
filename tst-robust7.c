@@ -61,7 +61,7 @@ tf (void *arg)
     {
       if (e != EOWNERDEAD)
 	{
-	  printf ("thread %ld: cond_wait did not return EOWNERDEAD\n", n + 1);
+	  printf ("thread %ld: cond_wait did not return EOWNERDEAD: %d\n", n + 1, e);
 	  exit (1);
 	}
     }
