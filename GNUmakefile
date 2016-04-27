@@ -24,6 +24,16 @@ BINS= \
 
 all:	$(BINS)
 
+do_tests:
+	@for x in 1 2 3 4 5 6 7; do \
+	    echo tst-robust$$x ;\
+	    ./tst-robust$$x ;\
+	done
+	@for x in 1 2 3 4 5 6 7; do \
+	    echo tst-robustpi$$x ;\
+	    ./tst-robustpi$$x ;\
+	done
+
 robust:	robust.c
 	$(CC) $(CFLAGS) -o robust robust.c -lpthread
 
